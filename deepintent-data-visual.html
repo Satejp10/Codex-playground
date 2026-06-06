@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeepIntent Business Model Data Visual</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #657080;
+      --blue: #104d7a;
+      --deep-blue: #042b4d;
+      --cyan: #33c2ff;
+      --teal: #21b8a7;
+      --green: #1f9d55;
+      --red: #d9291c;
+      --amber: #f4b63d;
+      --lavender: #8873d9;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --stroke: #d9e3ee;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .poster {
+      width: 2048px;
+      min-height: 1152px;
+      margin: 0 auto;
+      padding: 72px 76px 48px;
+      background:
+        radial-gradient(circle at 8% 9%, rgba(51, 194, 255, .22), transparent 20%),
+        radial-gradient(circle at 88% 12%, rgba(33, 184, 167, .20), transparent 24%),
+        linear-gradient(180deg, #f8fbff 0%, #f2f6fb 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .poster::after {
+      content: "";
+      position: absolute;
+      inset: 34px;
+      border: 1px solid rgba(16, 77, 122, .10);
+      border-radius: 30px;
+      pointer-events: none;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 40px;
+      align-items: start;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 86px;
+      line-height: .95;
+      letter-spacing: -3px;
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .subtitle {
+      margin-top: 18px;
+      max-width: 1120px;
+      color: var(--muted);
+      font-size: 28px;
+      line-height: 1.25;
+      font-weight: 600;
+    }
+
+    .brand-lockup {
+      width: 500px;
+      padding: 26px 28px;
+      border: 1px solid var(--stroke);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, .82);
+      box-shadow: 0 22px 60px rgba(16, 77, 122, .12);
+    }
+
+    .brand-name {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      color: var(--deep-blue);
+    }
+
+    .brand-mark {
+      width: 70px;
+      height: 70px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 34px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      box-shadow: 0 14px 30px rgba(16, 77, 122, .25);
+    }
+
+    .brand-kicker {
+      margin-top: 10px;
+      font-size: 20px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+    }
+
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+      margin: 28px 0 28px;
+    }
+
+    .metric {
+      min-height: 142px;
+      padding: 20px 22px;
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 18px 44px rgba(16, 77, 122, .08);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 40px;
+      line-height: 1;
+      color: var(--blue);
+      letter-spacing: -1px;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 10px;
+      font-size: 18px;
+      line-height: 1.18;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 438px;
+      gap: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .canvas-card {
+      background: rgba(255, 255, 255, .75);
+      border: 1px solid var(--stroke);
+      border-radius: 32px;
+      padding: 22px 20px 18px;
+      box-shadow: 0 22px 60px rgba(16, 77, 122, .10);
+    }
+
+    svg { display: block; width: 100%; height: auto; }
+
+    .node-title { font-size: 27px; font-weight: 900; fill: #111827; }
+    .node-sub { font-size: 18px; font-weight: 700; fill: #657080; }
+    .node-value { font-size: 34px; font-weight: 900; fill: var(--blue); }
+    .node-note { font-size: 17px; font-weight: 700; fill: #657080; }
+    .side-title { font-size: 30px; font-weight: 900; fill: #0b3b60; }
+    .small-label { font-size: 16px; font-weight: 800; fill: #657080; letter-spacing: .5px; text-transform: uppercase; }
+    .flow-label { font-size: 20px; font-weight: 900; fill: #111827; }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel {
+      padding: 22px 24px;
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 28px;
+      box-shadow: 0 18px 44px rgba(16, 77, 122, .08);
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      color: var(--blue);
+      font-size: 28px;
+      line-height: 1.05;
+      letter-spacing: -.6px;
+    }
+
+    .panel p, .panel li {
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.28;
+      font-weight: 650;
+    }
+
+    .panel p { margin: 0; }
+    .panel ul { margin: 0; padding-left: 22px; }
+    .panel li + li { margin-top: 8px; }
+
+    .badge-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .badge {
+      padding: 12px 14px;
+      border-radius: 18px;
+      color: white;
+      font-weight: 900;
+      font-size: 18px;
+      line-height: 1.12;
+      background: var(--blue);
+    }
+
+    .badge.teal { background: var(--teal); }
+    .badge.green { background: var(--green); }
+    .badge.amber { background: var(--amber); color: #3b2c02; }
+
+    footer {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 650;
+    }
+
+    .sources {
+      max-width: 1360px;
+      line-height: 1.25;
+    }
+
+    .signature {
+      color: var(--blue);
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -.5px;
+      text-align: right;
+    }
+
+    @media (max-width: 1200px) {
+      .poster { width: 100%; min-height: auto; padding: 34px 20px; }
+      header, .main, footer { grid-template-columns: 1fr; }
+      h1 { font-size: clamp(44px, 8vw, 86px); }
+      .brand-lockup { width: 100%; }
+      .metric-strip { grid-template-columns: repeat(2, 1fr); }
+      .signature { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster" aria-label="DeepIntent business model data visual">
+    <header>
+      <section>
+        <h1>DeepIntent Healthcare Advertising Platform</h1>
+        <p class="subtitle">A private-company data visual, modeled after App Economy Insights-style flow diagrams: inputs, platform capabilities, scale metrics, outcomes, and monetization signals.</p>
+      </section>
+      <aside class="brand-lockup" aria-label="DeepIntent logo treatment">
+        <div class="brand-name"><span class="brand-mark">DI</span>DeepIntent</div>
+        <div class="brand-kicker">Health Intelligent™ DSP</div>
+      </aside>
+    </header>
+
+    <section class="metric-strip" aria-label="Headline metrics">
+      <div class="metric"><strong>3.7M+</strong><span>verified healthcare professionals</span></div>
+      <div class="metric"><strong>250M+</strong><span>patient profiles for privacy-safe activation</span></div>
+      <div class="metric"><strong>600+</strong><span>pharmaceutical brands powered by the platform</span></div>
+      <div class="metric"><strong>98%</strong><span>prescribing HCP universe reached</span></div>
+      <div class="metric"><strong>$109.7M</strong><span>estimated annual revenue (third-party estimate)</span></div>
+      <div class="metric"><strong>351</strong><span>estimated employees, +21% headcount growth</span></div>
+    </section>
+
+    <section class="main">
+      <div class="canvas-card">
+        <svg viewBox="0 0 1450 720" role="img" aria-label="DeepIntent business model sankey showing pharma budgets flowing through the health advertising platform to HCP, DTC, integrated, and custom campaign products">
+          <defs>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#104d7a" flood-opacity=".16" />
+            </filter>
+            <linearGradient id="flowBlue" x1="0" x2="1">
+              <stop offset="0" stop-color="#33c2ff" stop-opacity=".58" />
+              <stop offset="1" stop-color="#104d7a" stop-opacity=".58" />
+            </linearGradient>
+            <linearGradient id="flowGreen" x1="0" x2="1">
+              <stop offset="0" stop-color="#21b8a7" stop-opacity=".48" />
+              <stop offset="1" stop-color="#1f9d55" stop-opacity=".54" />
+            </linearGradient>
+            <linearGradient id="flowRed" x1="0" x2="1">
+              <stop offset="0" stop-color="#f4b63d" stop-opacity=".44" />
+              <stop offset="1" stop-color="#d9291c" stop-opacity=".50" />
+            </linearGradient>
+            <linearGradient id="flowPurple" x1="0" x2="1">
+              <stop offset="0" stop-color="#8873d9" stop-opacity=".43" />
+              <stop offset="1" stop-color="#33c2ff" stop-opacity=".50" />
+            </linearGradient>
+          </defs>
+
+          <!-- Sources into platform -->
+          <path d="M 174 124 C 300 124, 324 234, 470 248" fill="none" stroke="url(#flowBlue)" stroke-width="96" stroke-linecap="round" />
+          <path d="M 174 318 C 300 318, 326 284, 470 284" fill="none" stroke="url(#flowGreen)" stroke-width="70" stroke-linecap="round" />
+          <path d="M 174 510 C 302 510, 338 374, 470 332" fill="none" stroke="url(#flowPurple)" stroke-width="54" stroke-linecap="round" />
+
+          <!-- Platform to product motions -->
+          <path d="M 562 240 C 700 164, 812 138, 984 126" fill="none" stroke="url(#flowBlue)" stroke-width="88" stroke-linecap="round" />
+          <path d="M 562 284 C 718 288, 818 286, 986 288" fill="none" stroke="url(#flowGreen)" stroke-width="74" stroke-linecap="round" />
+          <path d="M 562 330 C 704 432, 814 464, 986 460" fill="none" stroke="url(#flowRed)" stroke-width="62" stroke-linecap="round" />
+          <path d="M 562 372 C 706 558, 814 602, 986 598" fill="none" stroke="url(#flowPurple)" stroke-width="42" stroke-linecap="round" />
+
+          <!-- Product motions to outcomes -->
+          <path d="M 1060 126 C 1184 126, 1220 156, 1340 156" fill="none" stroke="#104d7a" stroke-opacity=".42" stroke-width="58" stroke-linecap="round" />
+          <path d="M 1060 288 C 1184 288, 1220 318, 1340 318" fill="none" stroke="#1f9d55" stroke-opacity=".42" stroke-width="52" stroke-linecap="round" />
+          <path d="M 1060 460 C 1184 460, 1220 474, 1340 474" fill="none" stroke="#d9291c" stroke-opacity=".38" stroke-width="44" stroke-linecap="round" />
+          <path d="M 1060 598 C 1184 598, 1220 594, 1340 594" fill="none" stroke="#8873d9" stroke-opacity=".38" stroke-width="34" stroke-linecap="round" />
+
+          <!-- Left source nodes -->
+          <g filter="url(#shadow)">
+            <rect x="82" y="76" width="92" height="172" rx="14" fill="#042b4d" />
+            <rect x="82" y="278" width="92" height="116" rx="14" fill="#21b8a7" />
+            <rect x="82" y="480" width="92" height="78" rx="14" fill="#8873d9" />
+          </g>
+          <text x="54" y="48" class="small-label">Demand inputs</text>
+          <text x="34" y="122" class="node-title">Pharma</text>
+          <text x="26" y="156" class="node-title">brands</text>
+          <text x="24" y="189" class="node-sub">600+ powered</text>
+          <text x="26" y="318" class="node-title">Agencies</text>
+          <text x="20" y="352" class="node-sub">all leading healthcare agencies</text>
+          <text x="24" y="510" class="node-title">Data +</text>
+          <text x="18" y="543" class="node-title">media</text>
+
+          <!-- Platform node -->
+          <g filter="url(#shadow)">
+            <rect x="470" y="196" width="104" height="226" rx="16" fill="#111827" />
+          </g>
+          <text x="354" y="154" class="small-label">Central platform</text>
+          <text x="330" y="206" class="node-value">DeepIntent</text>
+          <text x="334" y="244" class="node-title">Health Advertising</text>
+          <text x="350" y="280" class="node-title">Platform / DSP</text>
+          <text x="330" y="465" class="node-sub">Unites media, identity,</text>
+          <text x="330" y="492" class="node-sub">and clinical data</text>
+
+          <!-- Capability callouts around platform -->
+          <g>
+            <rect x="640" y="22" width="320" height="82" rx="22" fill="#ffffff" stroke="#d9e3ee" />
+            <text x="664" y="56" class="node-title">Cortex™ upgrade</text>
+            <text x="664" y="82" class="node-sub">AI + daily-refreshed health data</text>
+            <rect x="648" y="612" width="350" height="88" rx="22" fill="#ffffff" stroke="#d9e3ee" />
+            <text x="672" y="646" class="node-title">Outcomes Optimization™</text>
+            <text x="672" y="674" class="node-sub">real-time script lift + AQ bidding</text>
+          </g>
+
+          <!-- Product nodes -->
+          <g filter="url(#shadow)">
+            <rect x="984" y="84" width="78" height="96" rx="13" fill="#104d7a" />
+            <rect x="984" y="248" width="78" height="96" rx="13" fill="#1f9d55" />
+            <rect x="984" y="426" width="78" height="84" rx="13" fill="#d9291c" />
+            <rect x="984" y="574" width="78" height="64" rx="13" fill="#8873d9" />
+          </g>
+          <text x="896" y="52" class="small-label">Monetizable campaign products</text>
+          <text x="1110" y="104" class="side-title">HCP</text>
+          <text x="1110" y="134" class="node-sub">Reach verified providers</text>
+          <text x="1110" y="166" class="node-note">prescribing behavior → script performance</text>
+          <text x="1110" y="266" class="side-title">DTC</text>
+          <text x="1110" y="296" class="node-sub">Reach patient audiences</text>
+          <text x="1110" y="328" class="node-note">privacy-safe profiles + patient insights</text>
+          <text x="1110" y="444" class="side-title">Integrated</text>
+          <text x="1110" y="474" class="node-sub">Connect provider + patient engagement</text>
+          <text x="1110" y="504" class="node-note">25x new patient starts cited</text>
+          <text x="1110" y="584" class="side-title">Custom</text>
+          <text x="1110" y="614" class="node-sub">Tailored Health Intelligence™ programs</text>
+
+          <!-- Outcome labels -->
+          <text x="1250" y="54" class="small-label">Outcomes</text>
+          <g>
+            <circle cx="1372" cy="156" r="36" fill="#104d7a" />
+            <text x="1350" y="166" font-size="25" font-weight="900" fill="#fff">AQ</text>
+            <text x="1244" y="230" class="flow-label">160% higher audience quality</text>
+            <text x="1278" y="258" class="node-note">with patented optimization</text>
+
+            <circle cx="1372" cy="318" r="36" fill="#1f9d55" />
+            <text x="1342" y="328" font-size="25" font-weight="900" fill="#fff">63%</text>
+            <text x="1242" y="388" class="flow-label">more efficient cost</text>
+            <text x="1255" y="416" class="node-note">per verified patient</text>
+
+            <circle cx="1372" cy="474" r="36" fill="#d9291c" />
+            <text x="1344" y="484" font-size="25" font-weight="900" fill="#fff">25x</text>
+            <text x="1240" y="544" class="flow-label">new patient starts</text>
+            <text x="1248" y="572" class="node-note">from integrated targeting</text>
+
+            <circle cx="1372" cy="594" r="36" fill="#8873d9" />
+            <text x="1344" y="604" font-size="25" font-weight="900" fill="#fff">50%</text>
+            <text x="1234" y="666" class="flow-label">less trader workflow time</text>
+          </g>
+        </svg>
+      </div>
+
+      <aside class="sidebar" aria-label="Research notes">
+        <div class="panel">
+          <h2>How DeepIntent makes money</h2>
+          <p>DeepIntent sells a healthcare-specific demand-side platform and campaign services to pharmaceutical brands and agencies. The economic engine is media activation plus data, optimization, measurement, and custom support around HCP, DTC, and integrated campaigns.</p>
+          <div class="badge-row">
+            <div class="badge">DSP media buying</div>
+            <div class="badge teal">Clinical-data targeting</div>
+            <div class="badge green">Optimization & measurement</div>
+            <div class="badge amber">Custom solutions</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Why it is differentiated</h2>
+          <ul>
+            <li>Purpose-built for healthcare, not a generalist DSP.</li>
+            <li>Connects media, identity, and real-world clinical data.</li>
+            <li>Optimizes toward pharma KPIs: audience quality, script lift, adherence, and verified patient reach.</li>
+            <li>Omnichannel activation: CTV, audio, video, display/native, DOOH, and EHR.</li>
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h2>Private-company caveat</h2>
+          <p>DeepIntent is private, so the financials are estimates. This visual uses public company claims for scale/performance metrics and clearly labels third-party estimates for revenue and headcount.</p>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      <div class="sources">
+        Sources researched June 5, 2026: DeepIntent homepage (https://deepintent.com/) and platform page (https://deepintent.com/platform) for HCP/patient scale, solutions, channels, and performance claims; DeepIntent about page (https://deepintent.com/about) for founding and positioning; March 25, 2025 PR Newswire release for Cortex, workflow, AQ, and 600+ brand claims; Growjo for estimated annual revenue and employees; Dace Ventures for historical growth and top-pharma partnership claims.
+      </div>
+      <div class="signature">Business visual by Codex</div>
+    </footer>
+  </main>
+</body>
+</html>
